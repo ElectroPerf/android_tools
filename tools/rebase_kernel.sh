@@ -83,6 +83,17 @@ rm -rf *
 cp -a ${KERNEL_DIR}/* ${PROJECT_DIR}/kernels/msm-${KERNEL_VERSION}.${KERNEL_PATCHLEVEL}
 [[ -d ${AUDIO_KERNEL_DIR}/audio-kernel/ ]] && mkdir -p techpack/ && mv ${AUDIO_KERNEL_DIR}/audio-kernel/ techpack/audio
 git add --all > /dev/null 2>&1
+DOTFILES=(
+    "*.gitignore"
+    "*.cocciconfig"
+    "*.get_maintainer.ignore"
+    "*.gitattributes"
+    "*.gitignore"
+    "*.mailmap"
+)
+for ELEMENT in ${DOTFILES[@]}; do
+    [[ -d $ELEMENT ]] && git reset $DOTFILES > /dev/null 2>&1
+done
 git -c "user.name=ShivamKumarJha" -c "user.email=jha.shivam3@gmail.com" commit -sm "OEM Release" > /dev/null 2>&1
 rm -rf ${PROJECT_DIR}/kernels/${UNZIP_DIR}
 
@@ -169,11 +180,11 @@ DIFFPATHS=(
     "tools/"
 )
 for ELEMENT in ${DIFFPATHS[@]}; do
-    [[ -d $ELEMENT ]] && git add $ELEMENT > /dev/null 2>&1
+    [[ -d $ELEMENT ]] && git add $ELEMENT -f > /dev/null 2>&1
     git -c "user.name=ShivamKumarJha" -c "user.email=jha.shivam3@gmail.com" commit -sm "Add $ELEMENT modifications" > /dev/null 2>&1
 done
 # Remaining OEM modifications
-git add --all > /dev/null 2>&1
+git add --all -f > /dev/null 2>&1
 git -c "user.name=ShivamKumarJha" -c "user.email=jha.shivam3@gmail.com" commit -sm "Add remaining OEM modifications" > /dev/null 2>&1
 
 # Push to GitHub

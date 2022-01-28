@@ -79,14 +79,14 @@ call_methods () {
         curl -s -X PUT -H "Authorization: token ${GIT_TOKEN}" -H "Accept: application/vnd.github.mercy-preview+json" -d '{ "names": ["'"$TOPIC1"'","'"$TOPIC2"'","'"$TOPIC3"'"]}' "https://api.github.com/repos/${ORG}/${VT_REPO}/topics" > /dev/null 2>&1
     elif [[ ! -z "$GIT_TOKEN" ]] && [[ ! -z "$GITHUB_EMAIL" ]] && [[ ! -z "$GITHUB_USER" ]]; then
         ORG="$GITHUB_USER"
-        curl https://api.github.com/user/repos\?access_token=$GIT_TOKEN -d '{"name": "'"$DT_REPO"'","description": "'"$DT_REPO_DESC"'","private": false,"has_issues": true,"has_projects": false,"has_wiki": true}' > /dev/null 2>&1
-        curl https://api.github.com/user/repos\?access_token=$GIT_TOKEN -d '{"name": "'"$VT_REPO"'","description": "'"$VT_REPO_DESC"'","private": false,"has_issues": true,"has_projects": false,"has_wiki": true}' > /dev/null 2>&1
+        curl -s -X POST -H "Authorization: token ${GIT_TOKEN}" -d '{"name": "'"$DT_REPO"'","description": "'"$DT_REPO_DESC"'","private": false,"has_issues": true,"has_projects": false,"has_wiki": true}' "https://api.github.com/orgs/$ORG/repos" > /dev/null 2>&1
+        curl -s -X POST -H "Authorization: token ${GIT_TOKEN}" -d '{"name": "'"$VT_REPO"'","description": "'"$VT_REPO_DESC"'","private": false,"has_issues": true,"has_projects": false,"has_wiki": true}' "https://api.github.com/orgs/$ORG/repos" > /dev/null 2>&1
     fi
     [[ ! -z "$GIT_TOKEN" ]] && wget "https://raw.githubusercontent.com/$ORG/$DT_REPO/$BRANCH/Android.mk" -O "$PROJECT_DIR/dummy_dt/working/check" 2>/dev/null && echo "Dummy DT already done!" && exit 1
 
     # DummyDT
     [[ "$VERBOSE" != "n" ]] && echo -e "Preparing vendor_prop.mk"
-    bash $PROJECT_DIR/tools/system_vendor_prop.sh $PROJECT_DIR/dummy_dt/working/system_build.prop $PROJECT_DIR/dummy_dt/working/vendor_build.prop > /dev/null 2>&1
+    bash $PROJECT_DIR/tools/vendor_prop.sh ${ROM_PATH} > /dev/null 2>&1
     cp -a $PROJECT_DIR/working/* "$DT_DIR"/
     common_dt
     common_overlay > /dev/null 2>&1
